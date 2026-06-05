@@ -1,0 +1,45 @@
+import pandas as pd
+
+# Sample dataset
+movies = pd.DataFrame({
+    'movie': [
+        'Avengers', 'Iron Man', 'Thor', 'Captain America',
+        'Titanic', 'The Notebook', 'Interstellar', 'Gravity'
+    ],
+    'genre': [
+        'action sci-fi', 'action sci-fi', 'action fantasy', 'action drama',
+        'romance drama', 'romance', 'sci-fi drama', 'sci-fi thriller'
+    ]
+})
+
+# Function to calculate simple similarity
+def similarity(user_pref, movie_genre):
+    user_words = set(user_pref.lower().split())
+    movie_words = set(movie_genre.lower().split())
+    
+    return len(user_words.intersection(movie_words))
+
+# Recommendation function
+def recommend(user_pref):
+    scores = []
+
+    for i in range(len(movies)):
+        score = similarity(user_pref, movies.loc[i, 'genre'])
+        scores.append((movies.loc[i, 'movie'], score))
+
+    # Sort by highest similarity
+    scores.sort(key=lambda x: x[1], reverse=True)
+
+    # Filter top recommendations
+    top_movies = [movie for movie, score in scores if score > 0]
+
+    return top_movies if top_movies else "No recommendations found"
+
+# Input from user
+print("Example preferences: action, sci-fi, romance, drama")
+user_input = input("Enter your preference: ")
+
+result = recommend(user_input)
+
+print("\nRecommended Movies:")
+print(result)
